@@ -6,7 +6,7 @@ public class Main {
 }
 
 /*
-COISAS a Testar:
+Coisas a Testar:
     - Se esta registrando a entrada do veiculo.
           Se e possivel escolher se vai informar a hora ou pegar a hora atual
     - Se e possivel procurar este veiculo.
@@ -15,5 +15,4 @@ COISAS a Testar:
           Se e possivel escolher se vai informar a hora ou pegar a hora atual
           Se o calcula da saida esta correto
    -  Verificar relatorios
-
  */

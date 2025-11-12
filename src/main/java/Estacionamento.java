@@ -112,10 +112,10 @@ public class Estacionamento {
         String placaInfo = sc.nextLine();
 
         //Verificar se o veiculo com a placa digitada esta no estacionamento
-        boolean encontrado = false;
+        boolean encontrado = false; //Variavel utilizada para verificar se a placa foi encontrada no sistema
         for (int i = 0; i < listaVeiculos.size(); i++){
+            // se encontrar a placa, realiza o registro de saida
             if (placaInfo.equals(listaVeiculos.get(i).retornaPlaca())){
-                encontrado = true;
                 //Valida se o usuario quer digitar a hora de saida ou nao, depois envia a hora para que seja calculado a permanencia
                 char escolhaHora;
 
@@ -147,24 +147,39 @@ public class Estacionamento {
                 double permanencia = listaVeiculos.get(i).retornaPermanencia();
 
                 //Calcula o valor a pagar
-                double valorPagar = 12.00;//Sempre vai comecar com 12 pois sempre ira contar como primeira hora
+                double valorPagar, valorInicial, valorAdicional, calculoValor;
 
-                if (permanencia > 60){
+                //Diferencia os valores dependendo do tipo de veiculo
+                if ("carro".equals(listaVeiculos.get(i).retornaTipo())){
+                    valorInicial = 12.00;
+                    valorAdicional = 8.00;
+                }else{
+                    valorInicial = 8.00;
+                    valorAdicional = 5.00;
+                }
+                calculoValor = valorInicial;
+
+                if (permanencia > 60) {
                     permanencia -= 60;
-                    while (permanencia > 0){
-                        valorPagar += 8.00;
+                    while (permanencia >0){
+                        calculoValor += valorAdicional;
                         permanencia -= 60;
                     }
                 }
+
+                valorPagar = calculoValor;
+
                 System.out.println();
                 System.out.printf("Valor a pagar: R$%.2f%n", valorPagar);
                 listaVeiculos.remove(i);
                 vagasOcupadas -= 1;
                 totalArrecadado += valorPagar;
+                encontrado = true;
                 break;
 
             }
         }
+        //Se nao encontrar a placa, apenas informa que nao encontou o veiculo
         if (!encontrado){
             System.out.println("Veiculo não encontrado");
         }

@@ -47,7 +47,6 @@ public class Menu {
             }else if(escolha == 7){
                 System.out.println("Encerrando...");
             }else{
-                System.out.println("Digite apenas o numero da opcao desejada");
                 System.out.println("Escolha invalida");
             }
         }while(escolha != 7);

@@ -4,7 +4,7 @@ import java.time.Duration;
 public class Veiculo {
     //Atributos
     private final String placa, tipo;
-    private final LocalTime horaEntrada;
+    private LocalTime horaEntrada;
     private LocalTime horaSaida;
     private long permanencia;
 
@@ -32,6 +32,10 @@ public class Veiculo {
     }
     public void receberHoraSaida(LocalTime horaSaida){
         this.horaSaida = horaSaida;
+    }
+
+    public void receberHoraEntrada(LocalTime horaEntrada){
+        this.horaEntrada = horaEntrada;
     }
 
     public LocalTime retornaHoraSaida(){

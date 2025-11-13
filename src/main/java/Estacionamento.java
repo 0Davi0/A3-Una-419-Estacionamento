@@ -9,15 +9,11 @@ public class Estacionamento {
     private final DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("HH:mm");
 
     //Atributos da classe
-    private final int vagas = 3; //Criei uma Variavel para caso queiro aumentar o numero de vagas posteriormente
+    private final int vagas = 2; //Criei uma Variavel para caso queiro aumentar o numero de vagas posteriormente
     private int vagasOcupadas = 0;
     private final ArrayList<Veiculo> listaVeiculos = new ArrayList<>();
+    private final ArrayList<Veiculo> fila = new ArrayList<>();
     private double totalArrecadado = 0.00;
-
-    //Metodo contrutor
-    public Estacionamento(){
-
-    }
 
     //Metodos da classe Estacionamento
     public void registraEntrada(){
@@ -52,6 +48,7 @@ public class Estacionamento {
                 System.out.println("2 - Moto");
                 System.out.print("Escolha o tipo de veículo: ");
                 escolhaTipo = sc.nextInt();
+                sc.nextLine(); //Limpa o espaco deixado pelo scanner acima
 
                 if (escolhaTipo != 1 && escolhaTipo != 2) {
                     System.out.println("Escolha inválida, tente novamente.");
@@ -102,7 +99,18 @@ public class Estacionamento {
             System.out.println("Entrada: " + veiculo.retornaHoraEntrada().format(formatoHora));
 
         }else{
-            System.out.println("Todas as vagas estao ocupadas, por favor aguarde ate que um veiculo saia");
+            //Casos todas as vagas estejam ocupadas ao tentar registrar um veiculo
+            char resposta;
+            do {
+                System.out.print("Todas as vagas estao ocupadas, gostaria de esperar na fila? [S/N]: ");
+                resposta = Character.toLowerCase(sc.next().charAt(0));
+                if (resposta != 's' && resposta != 'n'){
+                    System.out.println("Opção invalida");
+                }
+            }while (resposta != 's' && resposta != 'n');
+            if(resposta == 's'){
+                controleFila();
+            }
         }
     }
 
@@ -112,7 +120,7 @@ public class Estacionamento {
         String placaInfo = sc.nextLine();
 
         //Verificar se o veiculo com a placa digitada esta no estacionamento
-        boolean encontrado = false; //Variavel utilizada para verificar se a placa foi encontrada no sistema
+        boolean encontrado = false; //Variavel utilizada para caso a placa nao seja encontrada, enviar um alerta informando
         for (int i = 0; i < listaVeiculos.size(); i++){
             // se encontrar a placa, realiza o registro de saida
             if (placaInfo.equals(listaVeiculos.get(i).retornaPlaca())){
@@ -123,7 +131,7 @@ public class Estacionamento {
                     System.out.println("Deseja informar a hora da saida? [S/N]");
                     System.out.print("OBS: Caso não informe, iremos registrar a hora atual: ");
                     escolhaHora = Character.toLowerCase(sc.next().charAt(0)); //Pega apenas a primeira letra digita e deixa em minusculo
-                    sc.nextLine(); // consome o Enter deixado pelo next()
+                    sc.nextLine(); //Limpa o espaco deixado pelo scanner acima
                     if (escolhaHora != 's' && escolhaHora != 'n'){
                         System.out.println("Opção invalida");
                     }
@@ -173,6 +181,18 @@ public class Estacionamento {
                 System.out.printf("Valor a pagar: R$%.2f%n", valorPagar);
                 listaVeiculos.remove(i);
                 vagasOcupadas -= 1;
+                if(!fila.isEmpty()){
+                    fila.get(0).receberHoraEntrada(LocalTime.now());
+                    listaVeiculos.add(fila.get(0));
+                    System.out.println("-----------------------------------");
+                    System.out.println("Veículo da fila entrou no estacionamento.");
+                    System.out.println("Placa: " + fila.get(0).retornaPlaca());
+                    System.out.println("Tipo: " + fila.get(0).retornaTipo());
+                    System.out.println("Entrada: " + fila.get(0).retornaHoraEntrada().format(formatoHora));
+                    fila.remove(0);
+                    vagasOcupadas += 1;
+
+                }
                 totalArrecadado += valorPagar;
                 encontrado = true;
                 break;
@@ -185,24 +205,64 @@ public class Estacionamento {
         }
     }
 
-    public double relatorioFaturamento(){
-        System.out.println();
-        return this.totalArrecadado;
-    }
+    public void controleFila(){
+        //Reutilizei uma parte do codigo do metodo registraEntrada
+        System.out.println("Informe os dados do veiculo");
 
-    public void relatorioVagas(){
-        System.out.println();
-        System.out.println("Total de vagas: " + vagas);
-        System.out.println("Vagas disponiveis: " + (vagas - vagasOcupadas));
-        System.out.println("Vagas ocupadas: " + vagasOcupadas);
-    }
+        //Adquire a placa
+        String placa;
 
-    public void relatorioVeiculos(){
-        System.out.println();
-        System.out.println("=====Veiculos no estacionamento=====");
+        System.out.print("Placa: ");
+        sc.nextLine(); // consome o Enter deixado pelo next()
+        placa = sc.nextLine().toLowerCase();
+
+        //Verifica se a placa digitada ja esta estacionado, caso sim, encerra o metodo
         for (int i = 0; i < listaVeiculos.size(); i++){
-            System.out.println((i + 1) + "° - " +"Placa: " + listaVeiculos.get(i).retornaPlaca());
+            if(placa.equals(listaVeiculos.get(i).retornaPlaca())){
+                System.out.println();
+                System.out.println("Veiculo ja esta no estacionamento!!");
+                return;
+            }
         }
+
+        //Verifica se a placa digitada ja esta na fila, caso sim, encerra o metodo
+        for (int i = 0; i < fila.size(); i++){
+            if(placa.equals(fila.get(i).retornaPlaca())){
+                System.out.println();
+                System.out.println("Veiculo ja esta na fila!!");
+                return;
+            }
+        }
+
+        //Adquire o tipo de veiculo, limitando a escolha a somente Carro e moto
+        String tipo;
+        int escolhaTipo;
+
+        do {
+            //garante que o usuario ira escolher o tipo certo de veiculo
+            System.out.println("Tipo de veiculos aceitos");
+            System.out.println("1 - Carro");
+            System.out.println("2 - Moto");
+            System.out.print("Escolha o tipo de veículo: ");
+            escolhaTipo = sc.nextInt();
+            sc.nextLine(); //Limpa o espaco deixado pelo scanner acima
+
+            if (escolhaTipo != 1 && escolhaTipo != 2) {
+                System.out.println("Escolha inválida, tente novamente.");
+            }
+        } while (escolhaTipo != 1 && escolhaTipo != 2);
+
+        tipo = (escolhaTipo == 1) ? "carro" : "moto";
+
+        //Cria o objeto "veiculo" e o guarda dentro do arrey fila
+        Veiculo veiculo = new Veiculo(placa, tipo, null, null, 0);
+        fila.add(veiculo);
+
+        System.out.println("-----------------------------------");
+        System.out.println("Veículo ingressado na fila.");
+        System.out.println("Placa: " + veiculo.retornaPlaca());
+        System.out.println("Tipo: " + veiculo.retornaTipo());
+
     }
 
     public void pesquisaVeiculo(){
@@ -229,4 +289,25 @@ public class Estacionamento {
             System.out.println("Veiculo não encontrado!");
         }
     }
+
+    public double relatorioFaturamento(){
+        System.out.println();
+        return this.totalArrecadado;
+    }
+
+    public void relatorioVagas(){
+        System.out.println();
+        System.out.println("Total de vagas: " + vagas);
+        System.out.println("Vagas disponiveis: " + (vagas - vagasOcupadas));
+        System.out.println("Vagas ocupadas: " + vagasOcupadas);
+    }
+
+    public void relatorioVeiculos(){
+        System.out.println();
+        System.out.println("=====Veiculos no estacionamento=====");
+        for (int i = 0; i < listaVeiculos.size(); i++){
+            System.out.println((i + 1) + "° - " +"Placa: " + listaVeiculos.get(i).retornaPlaca());
+        }
+    }
+
 }

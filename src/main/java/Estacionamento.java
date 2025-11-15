@@ -9,7 +9,7 @@ public class Estacionamento {
     private final DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("HH:mm");
 
     //Atributos da classe
-    private final int vagas = 2; //Criei uma Variavel para caso queiro aumentar o numero de vagas posteriormente
+    private final int vagas = 5; //Criei uma Variavel para caso queiro aumentar o numero de vagas posteriormente
     private int vagasOcupadas = 0;
     private final ArrayList<Veiculo> listaVeiculos = new ArrayList<>();
     private final ArrayList<Veiculo> fila = new ArrayList<>();
@@ -39,7 +39,7 @@ public class Estacionamento {
 
             //Adquire o tipo de veiculo, limitando a escolha a somente Carro e moto
             String tipo;
-            int escolhaTipo;
+            char escolhaTipo;
 
             do {
                 //garante que o usuario ira escolher o tipo certo de veiculo
@@ -47,15 +47,15 @@ public class Estacionamento {
                 System.out.println("1 - Carro");
                 System.out.println("2 - Moto");
                 System.out.print("Escolha o tipo de veículo: ");
-                escolhaTipo = sc.nextInt();
+                escolhaTipo = Character.toLowerCase(sc.next().charAt(0));
                 sc.nextLine(); //Limpa o espaco deixado pelo scanner acima
 
-                if (escolhaTipo != 1 && escolhaTipo != 2) {
+                if (escolhaTipo != '1' && escolhaTipo != '2') {
                     System.out.println("Escolha inválida, tente novamente.");
                 }
-            } while (escolhaTipo != 1 && escolhaTipo != 2);
+            } while (escolhaTipo != '1' && escolhaTipo != '2');
 
-            tipo = (escolhaTipo == 1) ? "carro" : "moto"; //Utilizei um operador ternário para simplificar
+            tipo = (escolhaTipo == '1') ? "carro" : "moto"; //Utilizei um operador ternário para simplificar
 
             //Adquire a hora para registrar na entrada
             LocalTime horaRegistrada = null;

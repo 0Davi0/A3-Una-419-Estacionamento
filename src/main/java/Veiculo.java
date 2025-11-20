@@ -1,15 +1,16 @@
-import java.time.LocalTime;
+// import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.time.Duration;
 
 public class Veiculo {
     //Atributos
     private final String placa, tipo;
-    private LocalTime horaEntrada;
-    private LocalTime horaSaida;
+    private LocalDateTime horaEntrada;
+    private LocalDateTime horaSaida;
     private long permanencia;
 
     //Metodo contrutor
-    public Veiculo(String placa, String tipo, LocalTime horaEntrada, LocalTime horaSaida, long permanencia){
+    public Veiculo(String placa, String tipo, LocalDateTime horaEntrada, LocalDateTime horaSaida, long permanencia){
         this.placa = placa;
         this.tipo = tipo;
         this.horaEntrada = horaEntrada;
@@ -27,18 +28,18 @@ public class Veiculo {
         return this.tipo;
     }
 
-    public LocalTime retornaHoraEntrada(){
+    public LocalDateTime retornaHoraEntrada(){
         return this.horaEntrada;
     }
-    public void receberHoraSaida(LocalTime horaSaida){
+    public void receberHoraSaida(LocalDateTime horaSaida){
         this.horaSaida = horaSaida;
     }
 
-    public void receberHoraEntrada(LocalTime horaEntrada){
+    public void receberHoraEntrada(LocalDateTime horaEntrada){
         this.horaEntrada = horaEntrada;
     }
 
-    public LocalTime retornaHoraSaida(){
+    public LocalDateTime retornaHoraSaida(){
         return this.horaSaida;
     }
 

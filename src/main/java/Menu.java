@@ -43,7 +43,7 @@ public class Menu {
             }else if(escolha == 5){
                 estacionamento.pesquisaVeiculo();
             }else if(escolha == 6){
-                System.out.printf("Total arrecadado: R$%.2f%n", estacionamento.relatorioFaturamento());
+                estacionamento.relatorioFaturamento();
             }else if(escolha == 7){
                 System.out.println("Encerrando...");
             }else{

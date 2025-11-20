@@ -1,12 +1,12 @@
 import java.util.Scanner;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class Estacionamento {
     //Atributos de utilitarios
     private final Scanner sc = new Scanner(System.in);
-    private final DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("HH:mm");
+    private final DateTimeFormatter formatoDataHora = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     //Atributos da classe
     private final int vagas = 5; //Criei uma Variavel para caso queiro aumentar o numero de vagas posteriormente
@@ -58,7 +58,7 @@ public class Estacionamento {
             tipo = (escolhaTipo == '1') ? "carro" : "moto"; //Utilizei um operador ternário para simplificar
 
             //Adquire a hora para registrar na entrada
-            LocalTime horaRegistrada = null;
+            LocalDateTime horaRegistrada = null;
             char escolhaHora;
 
             do {
@@ -76,15 +76,15 @@ public class Estacionamento {
                 do {
                     //Valida se o usuario esta digitando a hora no formato correto
                     try {
-                        System.out.print("Digite a hora no formato HH:mm: ");
-                        horaRegistrada = LocalTime.parse(sc.nextLine(), formatoHora);
+                        System.out.print("Digite a data e hora no formato dd/MM/yyyy HH:mm: ");
+                        horaRegistrada = LocalDateTime.parse(sc.nextLine(), formatoDataHora);
                         horaValida = true;
                     } catch (Exception e) {
-                        System.out.println("Formato inválido! Utilize HH:mm");
+                        System.out.println("Formato inválido! Utilize dd/MM/yyyy HH:mm");
                     }
                 } while (!horaValida);
             } else {
-                horaRegistrada = LocalTime.now();
+                horaRegistrada = LocalDateTime.now();
             }
 
             //Cria o objeto "veiculo" e o guarda dentro do arrey listaVeiculos
@@ -96,7 +96,7 @@ public class Estacionamento {
             System.out.println("Veículo registrado com sucesso.");
             System.out.println("Placa: " + veiculo.retornaPlaca());
             System.out.println("Tipo: " + veiculo.retornaTipo());
-            System.out.println("Entrada: " + veiculo.retornaHoraEntrada().format(formatoHora));
+            System.out.println("Entrada: " + veiculo.retornaHoraEntrada().format(formatoDataHora));
 
         }else{
             //Casos todas as vagas estejam ocupadas ao tentar registrar um veiculo
@@ -117,7 +117,7 @@ public class Estacionamento {
     public void registraSaida(){
         System.out.println();
         System.out.print("Informe a placa do Veiculo que esta saindo: ");
-        String placaInfo = sc.nextLine();
+        String placaInfo = sc.nextLine().toLowerCase();
 
         //Verificar se o veiculo com a placa digitada esta no estacionamento
         boolean encontrado = false; //Variavel utilizada para caso a placa nao seja encontrada, enviar um alerta informando
@@ -142,15 +142,15 @@ public class Estacionamento {
                     do{
                         //Valida se o usuario esta digitando a hora no formato correto
                         try{
-                            System.out.print("Digite a hora no formato HH:mm: ");
-                            listaVeiculos.get(i).receberHoraSaida(LocalTime.parse(sc.nextLine(), formatoHora));
+                            System.out.print("Digite a data e hora no formato dd/MM/yyyy HH:mm: ");
+                            listaVeiculos.get(i).receberHoraSaida(LocalDateTime.parse(sc.nextLine(), formatoDataHora));
                             horaValida = true;
                         } catch (Exception e){
-                            System.out.println("Formato inválido! Utilize HH:mm");
+                            System.out.println("Formato inválido! Utilize dd/MM/yyyy HH:mm:");
                         }
                     }while(!horaValida);
                 }else{
-                    listaVeiculos.get(i).receberHoraSaida(LocalTime.now());//Caso o usuario não queira digitar, pega a hora atual
+                    listaVeiculos.get(i).receberHoraSaida(LocalDateTime.now());//Caso o usuario não queira digitar, pega a hora atual
                 }
                 double permanencia = listaVeiculos.get(i).retornaPermanencia();
 
@@ -179,20 +179,23 @@ public class Estacionamento {
 
                 System.out.println();
                 System.out.printf("Valor a pagar: R$%.2f%n", valorPagar);
+
                 listaVeiculos.remove(i);
                 vagasOcupadas -= 1;
+
                 if(!fila.isEmpty()){
-                    fila.get(0).receberHoraEntrada(LocalTime.now());
+                    fila.get(0).receberHoraEntrada(LocalDateTime.now());
                     listaVeiculos.add(fila.get(0));
                     System.out.println("-----------------------------------");
                     System.out.println("Veículo da fila entrou no estacionamento.");
                     System.out.println("Placa: " + fila.get(0).retornaPlaca());
                     System.out.println("Tipo: " + fila.get(0).retornaTipo());
-                    System.out.println("Entrada: " + fila.get(0).retornaHoraEntrada().format(formatoHora));
+                    System.out.println("Entrada: " + fila.get(0).retornaHoraEntrada().format(formatoDataHora));
                     fila.remove(0);
                     vagasOcupadas += 1;
 
                 }
+
                 totalArrecadado += valorPagar;
                 encontrado = true;
                 break;
@@ -213,7 +216,6 @@ public class Estacionamento {
         String placa;
 
         System.out.print("Placa: ");
-        sc.nextLine(); // consome o Enter deixado pelo next()
         placa = sc.nextLine().toLowerCase();
 
         //Verifica se a placa digitada ja esta estacionado, caso sim, encerra o metodo
@@ -279,7 +281,7 @@ public class Estacionamento {
                 System.out.println("Veiculo encontrado:");
                 System.out.println("Placa: " + listaVeiculos.get(i).retornaPlaca());
                 System.out.println("Tipo: " + listaVeiculos.get(i).retornaTipo());
-                System.out.println("Entrada: " + listaVeiculos.get(i).retornaHoraEntrada().format(formatoHora));
+                System.out.println("Entrada: " + listaVeiculos.get(i).retornaHoraEntrada().format(formatoDataHora));
                 System.out.println("-----------------------------------");
             }
         }
@@ -290,9 +292,9 @@ public class Estacionamento {
         }
     }
 
-    public double relatorioFaturamento(){
+    public void relatorioFaturamento(){
         System.out.println();
-        return this.totalArrecadado;
+        System.out.printf("Total arrecadado: R$%.2f%n", totalArrecadado);
     }
 
     public void relatorioVagas(){
